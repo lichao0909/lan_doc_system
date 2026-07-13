@@ -1,0 +1,58 @@
+[
+  {
+    "id": "dcf7e68d-a3f1-49ea-994a-b489d0dc6d33",
+    "username": "admin",
+    "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "employee_id": "EMP001",
+    "name": "系统管理员",
+    "email": "admin@company.com",
+    "department": "行政部",
+    "level": 0,
+    "supervisor_id": null,
+    "role": "系统管理员",
+    "is_active": true,
+    "created_at": "2026-07-12 17:08:21"
+  },
+  {
+    "id": "dffdbebd-d424-412e-ab55-5a8e2d4b4cea",
+    "username": "manager1",
+    "password": "866485796cfa8d7c0cf7111640205b83076433547577511d81f8030ae99ecea5",
+    "employee_id": "EMP002",
+    "name": "技术部经理",
+    "email": "tech.manager@company.com",
+    "department": "技术部",
+    "level": 1,
+    "supervisor_id": null,
+    "role": "部门主管",
+    "is_active": true,
+    "created_at": "2026-07-12 17:08:21"
+  },
+  {
+    "id": "5d8322b8-3616-459d-8689-b8482511ed14",
+    "username": "staff1",
+    "password": "10176e7b7b24d317acfcf8d2064cfd2f24e154f7b5a96603077d5ef813d6a6b6",
+    "employee_id": "EMP003",
+    "name": "张三",
+    "email": "zhangsan@company.com",
+    "department": "技术部",
+    "level": 2,
+    "supervisor_id": "dffdbebd-d424-412e-ab55-5a8e2d4b4cea",
+    "role": "软件工程师",
+    "is_active": true,
+    "created_at": "2026-07-12 17:08:21"
+  },
+  {
+    "id": "0cab21d2-f473-474a-ac52-f25d1d9e3c7c",
+    "username": "guest1",
+    "password": "6b93ccba414ac1d0ae1e77f3fac560c748a6701ed6946735a49d463351518e16",
+    "employee_id": "EMP004",
+    "name": "访客用户",
+    "email": "guest@company.com",
+    "department": "行政部",
+    "level": 3,
+    "supervisor_id": null,
+    "role": "访客",
+    "is_active": true,
+    "created_at": "2026-07-12 17:08:21"
+  }
+]
