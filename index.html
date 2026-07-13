@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业文档管理系统 - 项目展示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .feature-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .code-block { background: #1e293b; font-family: 'Consolas', monospace; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- 头部 -->
+    <header class="py-12 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <i class="fas fa-folder-open text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">企业文档管理系统</h1>
+            <p class="text-xl text-slate-300 mb-2">Enterprise Document Management System</p>
+            <p class="text-slate-400">基于 FastAPI 的局域网文档管理平台</p>
+            
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <span class="px-4 py-2 bg-blue-600/30 border border-blue-500/50 rounded-full text-sm">
+                    <i class="fas fa-shield-alt mr-2"></i>JWT 认证
+                </span>
+                <span class="px-4 py-2 bg-amber-600/30 border border-amber-500/50 rounded-full text-sm">
+                    <i class="fas fa-layer-group mr-2"></i>四级权限
+                </span>
+                <span class="px-4 py-2 bg-green-600/30 border border-green-500/50 rounded-full text-sm">
+                    <i class="fas fa-comments mr-2"></i>批复系统
+                </span>
+                <span class="px-4 py-2 bg-purple-600/30 border border-purple-500/50 rounded-full text-sm">
+                    <i class="fas fa-code mr-2"></i>FastAPI
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 功能特性 -->
+    <section class="py-12 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">核心功能</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card-hover bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-users-cog text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">用户分级</h3>
+                    <p class="text-slate-400 text-sm">四级用户体系：系统管理员、部门主管、普通员工、访客</p>
+                </div>
+                
+                <div class="card-hover bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-sitemap text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">直属关系</h3>
+                    <p class="text-slate-400 text-sm">支持上下级关系树，上级可管理下属文档和账户</p>
+                </div>
+                
+                <div class="card-hover bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-lock text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">权限控制</h3>
+                    <p class="text-slate-400 text-sm">文档三级可见性：私有、部门、公开，细粒度权限控制</p>
+                </div>
+                
+                <div class="card-hover bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-comment-dots text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">批复系统</h3>
+                    <p class="text-slate-400 text-sm">支持@提及用户，批复状态跟踪（待处理/已解决）</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术栈 -->
+    <section class="py-12 px-4 bg-black/20">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">技术架构</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-server text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">后端</h3>
+                    <ul class="text-slate-400 space-y-2 text-sm">
+                        <li>Python 3.8+</li>
+                        <li>FastAPI 框架</li>
+                        <li>Uvicorn ASGI</li>
+                        <li>JWT 认证</li>
+                        <li>SHA256 密码哈希</li>
+                    </ul>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-cyan-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-desktop text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">前端</h3>
+                    <ul class="text-slate-400 space-y-2 text-sm">
+                        <li>HTML5</li>
+                        <li>TailwindCSS</li>
+                        <li>JavaScript (ES6+)</li>
+                        <li>Font Awesome 图标</li>
+                        <li>响应式设计</li>
+                    </ul>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-database text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">存储</h3>
+                    <ul class="text-slate-400 space-y-2 text-sm">
+                        <li>JSON 用户数据</li>
+                        <li>CSV 文档元数据</li>
+                        <li>JSONL 批复记录</li>
+                        <li>文件系统存储</li>
+                        <li>无需数据库</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 快速开始 -->
+    <section class="py-12 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">快速开始</h2>
+            
+            <div class="space-y-6">
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h3 class="text-lg font-semibold mb-3 flex items-center">
+                        <span class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 text-sm">1</span>
+                        下载项目
+                    </h3>
+                    <div class="code-block rounded-lg p-4 text-sm overflow-x-auto">
+                        <code class="text-green-400">git clone</code> <code class="text-slate-300">&lt;项目地址&gt;</code><br>
+                        <code class="text-green-400">cd</code> <code class="text-slate-300">lan_doc_system</code>
+                    </div>
+                </div>
+                
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h3 class="text-lg font-semibold mb-3 flex items-center">
+                        <span class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 text-sm">2</span>
+                        安装依赖
+                    </h3>
+                    <div class="code-block rounded-lg p-4 text-sm overflow-x-auto">
+                        <code class="text-green-400">pip install -r</code> <code class="text-slate-300">requirements.txt</code>
+                    </div>
+                </div>
+                
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h3 class="text-lg font-semibold mb-3 flex items-center">
+                        <span class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 text-sm">3</span>
+                        启动服务
+                    </h3>
+                    <div class="code-block rounded-lg p-4 text-sm overflow-x-auto">
+                        <code class="text-slate-500"># Windows</code><br>
+                        <code class="text-green-400">start.bat</code><br><br>
+                        <code class="text-slate-500"># Linux/Mac</code><br>
+                        <code class="text-green-400">./start.sh</code><br><br>
+                        <code class="text-slate-500"># 或手动启动</code><br>
+                        <code class="text-green-400">python</code> <code class="text-slate-300">main.py</code>
+                    </div>
+                </div>
+                
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h3 class="text-lg font-semibold mb-3 flex items-center">
+                        <span class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 text-sm">4</span>
+                        访问系统
+                    </h3>
+                    <p class="text-slate-400 mb-3">打开浏览器访问: <code class="text-amber-400">http://localhost:8000</code></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 默认账号 -->
+    <section class="py-12 px-4 bg-black/20">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">默认测试账号</h2>
+            
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-gradient-to-r from-red-900/50 to-red-800/30 rounded-xl p-5 border border-red-500/30">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-red-400 text-sm mb-1">系统管理员</p>
+                            <p class="font-mono text-lg">admin / admin123</p>
+                        </div>
+                        <i class="fas fa-crown text-red-500 text-2xl"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-purple-900/50 to-purple-800/30 rounded-xl p-5 border border-purple-500/30">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-purple-400 text-sm mb-1">部门主管</p>
+                            <p class="font-mono text-lg">manager1 / manager123</p>
+                        </div>
+                        <i class="fas fa-user-tie text-purple-500 text-2xl"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-blue-900/50 to-blue-800/30 rounded-xl p-5 border border-blue-500/30">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-400 text-sm mb-1">普通员工</p>
+                            <p class="font-mono text-lg">staff1 / staff123</p>
+                        </div>
+                        <i class="fas fa-user text-blue-500 text-2xl"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-green-900/50 to-green-800/30 rounded-xl p-5 border border-green-500/30">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-400 text-sm mb-1">访客</p>
+                            <p class="font-mono text-lg">guest1 / guest123</p>
+                        </div>
+                        <i class="fas fa-user-clock text-green-500 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API 文档 -->
+    <section class="py-12 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-6">API 文档</h2>
+            <p class="text-slate-400 mb-8">启动服务后，可通过以下地址查看完整的 API 文档</p>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#" class="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition-colors">
+                    <i class="fas fa-book mr-2"></i>Swagger UI (/docs)
+                </a>
+                <a href="#" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors">
+                    <i class="fas fa-file-alt mr-2"></i>ReDoc (/redoc)
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 项目结构 -->
+    <section class="py-12 px-4 bg-black/20">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">项目结构</h2>
+            
+            <div class="code-block rounded-xl p-6 text-sm overflow-x-auto">
+<code class="text-slate-300">
+lan_doc_system/
+├── <span class="text-yellow-400">main.py</span>              <span class="text-slate-500"># FastAPI 主程序</span>
+├── <span class="text-yellow-400">requirements.txt</span>     <span class="text-slate-500"># Python 依赖</span>
+├── <span class="text-yellow-400">start.bat</span>            <span class="text-slate-500"># Windows 启动脚本</span>
+├── <span class="text-yellow-400">start.sh</span>             <span class="text-slate-500"># Linux/Mac 启动脚本</span>
+├── <span class="text-blue-400">static/</span>              <span class="text-slate-500"># 前端文件</span>
+│   ├── <span class="text-green-400">index.html</span>     <span class="text-slate-500"># 主页面</span>
+│   ├── <span class="text-green-400">style.css</span>      <span class="text-slate-500"># 样式文件</span>
+│   └── <span class="text-green-400">app.js</span>         <span class="text-slate-500"># 前端逻辑</span>
+├── <span class="text-blue-400">data/</span>                <span class="text-slate-500"># 数据文件</span>
+│   ├── <span class="text-green-400">users.json</span>     <span class="text-slate-500"># 用户数据</span>
+│   ├── <span class="text-green-400">documents.csv</span>  <span class="text-slate-500"># 文档元数据</span>
+│   └── <span class="text-green-400">comments.jsonl</span> <span class="text-slate-500"># 批复记录</span>
+├── <span class="text-blue-400">uploads/</span>             <span class="text-slate-500"># 上传文件存储</span>
+└── <span class="text-blue-400">cache/</span>               <span class="text-slate-500"># 缓存目录</span>
+</code>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="py-8 px-4 border-t border-white/10">
+        <div class="max-w-6xl mx-auto text-center text-slate-500">
+            <p>企业文档管理系统 &copy; 2024 | 基于 FastAPI 构建</p>
+        </div>
+    </footer>
+</body>
+</html>
+px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700">
+                                    <i class="fas fa-plus mr-1"></i>添加用户
+                                </button>
+                            </div>
+                            <table class="w-full">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">用户</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">部门</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">等级</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">状态</th>
+                                        <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-list-body">
+                                    <!-- 动态生成用户列表 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- 统计视图 -->
+                    <div id="stats-view" class="hidden space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-slate-500">总文档数</p>
+                                        <p id="stat-total-docs" class="text-3xl font-bold text-blue-600 mt-1">0</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-file-alt text-blue-600 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-slate-500">总用户数</p>
+                                        <p id="stat-total-users" class="text-3xl font-bold text-green-600 mt-1">0</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-users text-green-600 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-slate-500">批复数量</p>
+                                        <p id="stat-total-comments" class="text-3xl font-bold text-amber-600 mt-1">0</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-comments text-amber-600 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-slate-500">存储使用</p>
+                                        <p id="stat-storage" class="text-3xl font-bold text-purple-600 mt-1">0 MB</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-hdd text-purple-600 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                                <h3 class="font-semibold text-slate-800 mb-4">文档分类统计</h3>
+                                <div id="category-stats" class="space-y-3">
+                                    <!-- 动态生成 -->
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                                <h3 class="font-semibold text-slate-800 mb-4">可见性分布</h3>
+                                <div id="visibility-stats" class="space-y-3">
+                                    <!-- 动态生成 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 空状态 -->
+                    <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20">
+                        <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-folder-open text-slate-300 text-4xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-slate-600">暂无文档</h3>
+                        <p class="text-slate-400 mt-2">点击右上角上传按钮添加文档</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- 右侧批复面板 -->
+            <aside id="comments-panel" class="w-80 bg-white border-l border-slate-200 flex flex-col hidden lg:flex">
+                <div class="p-4 border-b border-slate-200">
+                    <h3 class="font-semibold text-slate-800">文档批复</h3>
+                    <p class="text-sm text-slate-500">选择文档查看批复</p>
+                </div>
+                
+                <div id="comments-list" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="text-center text-slate-400 py-10">
+                        <i class="fas fa-comments text-4xl mb-3"></i>
+                        <p>请选择文档查看批复</p>
+                    </div>
+                </div>
+                
+                <div id="comment-input-area" class="p-4 border-t border-slate-200 hidden">
+                    <textarea id="comment-input" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="输入批复内容，使用@提及用户..."></textarea>
+                    <div class="mt-2 flex justify-between items-center">
+                        <span class="text-xs text-slate-400">提示: 使用 @用户名 提及</span>
+                        <button id="btn-submit-comment" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700">
+                            提交
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- 上传文档模态框 -->
+    <div id="upload-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-slate-800">上传文档</h3>
+                <button class="close-modal text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="upload-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">文档标题</label>
+                    <input type="text" name="title" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="输入文档标题" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">描述</label>
+                    <textarea name="description" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none" rows="2" placeholder="输入文档描述"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">分类</label>
+                        <select name="category" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <!-- 动态生成 -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">可见性</label>
+                        <select name="visibility" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="private">私有</option>
+                            <option value="department">部门</option>
+                            <option value="public">公开</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">选择文件</label>
+                    <div id="drop-zone" class="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-slate-300 mb-3"></i>
+                        <p class="text-slate-600">拖拽文件到此处或点击选择</p>
+                        <p class="text-sm text-slate-400 mt-1">支持各种文档格式</p>
+                        <input type="file" name="file" class="hidden" required>
+                    </div>
+                    <p id="selected-file-name" class="text-sm text-blue-600 mt-2 hidden"></p>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" class="close-modal px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-upload mr-2"></i>上传
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 添加用户模态框 -->
+    <div id="add-user-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-slate-800">添加用户</h3>
+                <button class="close-modal text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="add-user-form" class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">用户名</label>
+                        <input type="text" name="username" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="登录用户名" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">密码</label>
+                        <input type="password" name="password" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="初始密码" required>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">员工编号</label>
+                        <input type="text" name="employee_id" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="EMP001" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">真实姓名</label>
+                        <input type="text" name="name" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="姓名" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">邮箱</label>
+                    <input type="email" name="email" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="user@company.com" required>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">部门</label>
+                        <select name="department" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <!-- 动态生成 -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">用户等级</label>
+                        <select name="level" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="1">部门主管</option>
+                            <option value="2" selected>普通员工</option>
+                            <option value="3">访客</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">角色名称</label>
+                    <input type="text" name="role" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="如：软件工程师" required>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" class="close-modal px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i>添加
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 修改密码模态框 -->
+    <div id="change-password-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-slate-800">修改密码</h3>
+                <button class="close-modal text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="change-password-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">当前密码</label>
+                    <input type="password" name="old_password" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">新密码</label>
+                    <input type="password" name="new_password" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">确认新密码</label>
+                    <input type="password" name="confirm_password" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" class="close-modal px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-key mr-2"></i>修改
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 文档详情模态框 -->
+    <div id="document-detail-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-slate-800">文档详情</h3>
+                <button class="close-modal text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="document-detail-content" class="p-6 overflow-y-auto">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div class="px-6 py-4 border-t border-slate-200 flex justify-end space-x-3">
+                <button type="button" class="close-modal px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50">关闭</button>
+                <button id="btn-detail-download" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <i class="fas fa-download mr-2"></i>下载
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
