@@ -29,6 +29,14 @@ cache/
 uploads/
 data/
 
+# WorkBuddy memory
+.workbuddy/
+
+# Temporary / backup files
+*.new
+*.bak
+*.tmp
+
 # Environment & secrets
 .env
 *.key
