@@ -1,14 +1,14 @@
-/**
- * 企业文档管理系统 - 前端逻辑
+﻿/**
+ * 浼佷笟鏂囨。绠＄悊绯荤粺 - 鍓嶇閫昏緫
  */
 
-// ==================== 全局状态 ====================
+// ==================== 鍏ㄥ眬鐘舵€?====================
 const state = {
     token: localStorage.getItem('token'),
     user: JSON.parse(localStorage.getItem('user') || 'null'),
     currentView: 'all',
-    currentFolderId: null, // 当前文件夹ID
-    folderStack: [], // 文件夹导航栈
+    currentFolderId: null, // 褰撳墠鏂囦欢澶笽D
+    folderStack: [], // 鏂囦欢澶瑰鑸爤
     viewMode: 'grid', // grid or list
     documents: [],
     users: [],
@@ -20,7 +20,7 @@ const state = {
     stats: null
 };
 
-// ==================== API 封装 ====================
+// ==================== API 灏佽 ====================
 const API_BASE = '';
 
 async function apiRequest(endpoint, options = {}) {
@@ -45,14 +45,13 @@ async function apiRequest(endpoint, options = {}) {
         const response = await fetch(url, config);
         
         if (response.status === 401) {
-            // Token 过期，清除登录状态
-            logout();
+            // Token 杩囨湡锛屾竻闄ょ櫥褰曠姸鎬?            logout();
             return null;
         }
         
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.detail || '请求失败');
+            throw new Error(error.detail || '璇锋眰澶辫触');
         }
         
         return await response.json();
@@ -62,7 +61,7 @@ async function apiRequest(endpoint, options = {}) {
     }
 }
 
-// ==================== 认证相关 ====================
+// ==================== 璁よ瘉鐩稿叧 ====================
 async function login(username, password) {
     const data = await apiRequest('/api/login', {
         method: 'POST',
@@ -94,7 +93,7 @@ async function changePassword(oldPassword, newPassword) {
     });
 }
 
-// ==================== 用户管理 ====================
+// ==================== 鐢ㄦ埛绠＄悊 ====================
 async function getUsers(filters = {}) {
     const params = new URLSearchParams();
     if (filters.department) params.append('department', filters.department);
@@ -126,7 +125,7 @@ async function getUserSupervisors(userId) {
     return await apiRequest(`/api/users/${userId}/supervisors`);
 }
 
-// ==================== 文件夹管理 ====================
+// ==================== 鏂囦欢澶圭鐞?====================
 async function createFolder(folderData) {
     return await apiRequest('/api/folders', {
         method: 'POST',
@@ -156,12 +155,12 @@ async function uploadFolder(formData) {
 
     if (response.status === 401) {
         logout();
-        throw new Error('认证已过期，请重新登录');
+        throw new Error('璁よ瘉宸茶繃鏈燂紝璇烽噸鏂扮櫥褰?);
     }
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.detail || '上传失败');
+        throw new Error(error.detail || '涓婁紶澶辫触');
     }
 
     return await response.json();
@@ -169,15 +168,14 @@ async function uploadFolder(formData) {
 
 async function loadFolderOptions() {
     try {
-        // 获取所有文件夹
+        // 鑾峰彇鎵€鏈夋枃浠跺す
         const documents = await getDocuments({});
         const folders = documents.filter(doc => doc.is_folder);
 
         const select = document.getElementById('folder-parent');
-        // 清空现有选项（保留第一个选项）
-        select.innerHTML = '<option value="">根目录</option>';
+        // 娓呯┖鐜版湁閫夐」锛堜繚鐣欑涓€涓€夐」锛?        select.innerHTML = '<option value="">鏍圭洰褰?/option>';
 
-        // 添加文件夹选项
+        // 娣诲姞鏂囦欢澶归€夐」
         folders.forEach(folder => {
             const option = document.createElement('option');
             option.value = folder.id;
@@ -185,12 +183,12 @@ async function loadFolderOptions() {
             select.appendChild(option);
         });
     } catch (error) {
-        console.error('加载文件夹列表失败:', error);
+        console.error('鍔犺浇鏂囦欢澶瑰垪琛ㄥけ璐?', error);
     }
 }
 
 async function enterFolder(folderId, folderName) {
-    // 将当前文件夹添加到导航栈
+    // 灏嗗綋鍓嶆枃浠跺す娣诲姞鍒板鑸爤
     if (state.currentFolderId !== null) {
         const currentFolder = state.documents.find(d => d.id === state.currentFolderId);
         if (currentFolder) {
@@ -201,66 +199,56 @@ async function enterFolder(folderId, folderName) {
         }
     }
 
-    // 设置当前文件夹
-    state.currentFolderId = folderId;
+    // 璁剧疆褰撳墠鏂囦欢澶?    state.currentFolderId = folderId;
 
-    // 更新页面标题和导航
-    updateFolderNavigation(folderName);
+    // 鏇存柊椤甸潰鏍囬鍜屽鑸?    updateFolderNavigation(folderName);
 
-    // 加载文件夹内容
-    await loadDocuments();
+    // 鍔犺浇鏂囦欢澶瑰唴瀹?    await loadDocuments();
 }
 
 function exitFolder(goToRoot = false) {
     if (goToRoot) {
-        // 直接回到根目录
-        state.currentFolderId = null;
+        // 鐩存帴鍥炲埌鏍圭洰褰?        state.currentFolderId = null;
         state.folderStack = [];
-        updateFolderNavigation('根目录');
+        updateFolderNavigation('鏍圭洰褰?);
     } else if (state.folderStack.length > 0) {
-        // 从导航栈弹出上一个文件夹
+        // 浠庡鑸爤寮瑰嚭涓婁竴涓枃浠跺す
         const prevFolder = state.folderStack.pop();
         state.currentFolderId = prevFolder.id;
         updateFolderNavigation(prevFolder.name);
     } else {
-        // 回到根目录
-        state.currentFolderId = null;
-        updateFolderNavigation('根目录');
+        // 鍥炲埌鏍圭洰褰?        state.currentFolderId = null;
+        updateFolderNavigation('鏍圭洰褰?);
     }
 
-    // 重新加载文档
+    // 閲嶆柊鍔犺浇鏂囨。
     loadDocuments();
 }
 
 function updateFolderNavigation(folderName) {
-    // 更新页面标题
-    let title = '全部文档';
+    // 鏇存柊椤甸潰鏍囬
+    let title = '鍏ㄩ儴鏂囨。';
     if (state.currentFolderId !== null) {
-        title = `文件夹: ${folderName}`;
+        title = `鏂囦欢澶? ${folderName}`;
     }
 
     document.getElementById('page-title').textContent = title;
 
-    // 更新面包屑导航
-    const breadcrumbEl = document.getElementById('breadcrumb');
+    // 鏇存柊闈㈠寘灞戝鑸?    const breadcrumbEl = document.getElementById('breadcrumb');
     if (state.currentFolderId === null) {
-        // 根目录，隐藏面包屑
-        breadcrumbEl.classList.add('hidden');
+        // 鏍圭洰褰曪紝闅愯棌闈㈠寘灞?        breadcrumbEl.classList.add('hidden');
     } else {
         breadcrumbEl.classList.remove('hidden');
 
-        // 构建面包屑HTML
+        // 鏋勫缓闈㈠寘灞慔TML
         let breadcrumbHtml = '';
 
-        // 根目录链接
-        breadcrumbHtml += `
+        // 鏍圭洰褰曢摼鎺?        breadcrumbHtml += `
             <button class="flex items-center text-blue-600 hover:text-blue-800 breadcrumb-item" data-folder-id="">
-                <i class="fas fa-home mr-1"></i>根目录
-            </button>
+                <i class="fas fa-home mr-1"></i>鏍圭洰褰?            </button>
         `;
 
-        // 文件夹栈中的每个文件夹
-        for (const folder of state.folderStack) {
+        // 鏂囦欢澶规爤涓殑姣忎釜鏂囦欢澶?        for (const folder of state.folderStack) {
             breadcrumbHtml += `
                 <span class="mx-2 text-slate-400">/</span>
                 <button class="flex items-center text-blue-600 hover:text-blue-800 breadcrumb-item" data-folder-id="${folder.id}">
@@ -269,8 +257,7 @@ function updateFolderNavigation(folderName) {
             `;
         }
 
-        // 当前文件夹（不在栈中）
-        if (folderName) {
+        // 褰撳墠鏂囦欢澶癸紙涓嶅湪鏍堜腑锛?        if (folderName) {
             breadcrumbHtml += `
                 <span class="mx-2 text-slate-400">/</span>
                 <span class="flex items-center text-slate-700">
@@ -281,26 +268,22 @@ function updateFolderNavigation(folderName) {
 
         breadcrumbEl.innerHTML = breadcrumbHtml;
 
-        // 为面包屑项添加点击事件
-        breadcrumbEl.querySelectorAll('.breadcrumb-item').forEach(btn => {
+        // 涓洪潰鍖呭睉椤规坊鍔犵偣鍑讳簨浠?        breadcrumbEl.querySelectorAll('.breadcrumb-item').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const folderId = btn.getAttribute('data-folder-id');
                 if (folderId === '') {
-                    // 根目录
-                    exitFolder(true); // 退出到根目录
-                } else {
-                    // 导航到指定文件夹
-                    // 需要找到文件夹在栈中的位置
+                    // 鏍圭洰褰?                    exitFolder(true); // 閫€鍑哄埌鏍圭洰褰?                } else {
+                    // 瀵艰埅鍒版寚瀹氭枃浠跺す
+                    // 闇€瑕佹壘鍒版枃浠跺す鍦ㄦ爤涓殑浣嶇疆
                     const index = state.folderStack.findIndex(f => f.id === folderId);
                     if (index !== -1) {
-                        // 弹出到该位置
+                        // 寮瑰嚭鍒拌浣嶇疆
                         const targetFolder = state.folderStack[index];
-                        // 弹出栈直到该位置
+                        // 寮瑰嚭鏍堢洿鍒拌浣嶇疆
                         while (state.folderStack.length > index + 1) {
                             state.folderStack.pop();
                         }
-                        // 设置当前文件夹
-                        state.currentFolderId = targetFolder.id;
+                        // 璁剧疆褰撳墠鏂囦欢澶?                        state.currentFolderId = targetFolder.id;
                         loadDocuments();
                         updateFolderNavigation(targetFolder.name);
                     }
@@ -310,7 +293,7 @@ function updateFolderNavigation(folderName) {
     }
 }
 
-// ==================== 文档管理 ====================
+// ==================== 鏂囨。绠＄悊 ====================
 async function getDocuments(filters = {}) {
     const params = new URLSearchParams();
     if (filters.category) params.append('category', filters.category);
@@ -321,6 +304,138 @@ async function getDocuments(filters = {}) {
 
     const data = await apiRequest(`/api/documents?${params}`);
     return data?.documents || [];
+}
+
+// ==================== 改进的文档上传 ====================
+// 带进度条的上传函数
+async function uploadDocumentWithProgress(formData, onProgress, onComplete, onError, abortController) {
+    const url = `${API_BASE}/api/documents/upload`;
+    
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        const uploadId = 'upload_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        
+        // 添加到上传管理器
+        uploadManager.addUpload(uploadId, xhr, abortController);
+        
+        // 进度事件
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                const speed = e.loaded / ((Date.now() - uploadManager.uploads.get(uploadId)?.startTime || Date.now()) / 1000);
+                if (onProgress) {
+                    onProgress({
+                        loaded: e.loaded,
+                        total: e.total,
+                        percent: percent,
+                        speed: speed,
+                        uploadId: uploadId
+                    });
+                }
+            }
+        });
+        
+        // 完成事件
+        xhr.addEventListener('load', () => {
+            uploadManager.removeUpload(uploadId);
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (onComplete) onComplete(response);
+                    resolve(response);
+                } catch (e) {
+                    reject(new Error('解析响应失败'));
+                }
+            } else if (xhr.status === 401) {
+                logout();
+                reject(new Error('认证已过期，请重新登录'));
+            } else {
+                let errorMsg = '上传失败';
+                try {
+                    const error = JSON.parse(xhr.responseText);
+                    errorMsg = error.detail || errorMsg;
+                } catch (e) {}
+                reject(new Error(errorMsg));
+            }
+        });
+        
+        // 错误事件
+        xhr.addEventListener('error', () => {
+            uploadManager.removeUpload(uploadId);
+            if (onError) onError(new Error('网络错误'));
+            reject(new Error('网络错误'));
+        });
+        
+        // 取消事件
+        xhr.addEventListener('abort', () => {
+            uploadManager.removeUpload(uploadId);
+            reject(new Error('上传已取消'));
+        });
+        
+        xhr.open('POST', url, true);
+        if (state.token) {
+            xhr.setRequestHeader('Authorization', `Bearer ${state.token}`);
+        }
+        xhr.send(formData);
+    });
+}
+
+// 批量上传多个文件
+async function uploadMultipleFiles(files, commonData, onProgress) {
+    const results = [];
+    const errors = [];
+    
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // 验证文件
+        const validation = uploadManager.validateFile(file);
+        if (!validation.valid) {
+            errors.push({ file: file.name, error: validation.error });
+            continue;
+        }
+        
+        const formData = new FormData();
+        formData.append('title', commonData.title || file.name);
+        formData.append('description', commonData.description || '');
+        formData.append('category', commonData.category || '其他');
+        formData.append('visibility', commonData.visibility || 'private');
+        
+        // 自动设置当前文件夹
+        if (state.currentFolderId) {
+            formData.append('parent_id', state.currentFolderId);
+        }
+        
+        formData.append('file', file);
+        
+        try {
+            const result = await uploadDocumentWithProgress(
+                formData,
+                (progress) => {
+                    if (onProgress) {
+                        onProgress({
+                            ...progress,
+                            fileIndex: i,
+                            totalFiles: files.length,
+                            fileName: file.name
+                        });
+                    }
+                },
+                null,
+                null
+            );
+            results.push(result);
+        } catch (error) {
+            errors.push({ file: file.name, error: error.message });
+        }
+    }
+    
+    return { results, errors };
+}
+
+// 旧的 uploadDocument 函数，保持向后兼容
+async function uploadDocument(formData) {
+    return uploadDocumentWithProgress(formData);
 }
 
 async function uploadDocument(formData) {
@@ -340,12 +455,12 @@ async function uploadDocument(formData) {
     
     if (response.status === 401) {
         logout();
-        throw new Error('认证已过期，请重新登录');
+        throw new Error('璁よ瘉宸茶繃鏈燂紝璇烽噸鏂扮櫥褰?);
     }
     
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.detail || '上传失败');
+        throw new Error(error.detail || '涓婁紶澶辫触');
     }
     
     return await response.json();
@@ -377,24 +492,24 @@ async function downloadDocument(docId) {
         
         if (response.status === 401) {
             logout();
-            throw new Error('认证已过期，请重新登录');
+            throw new Error('璁よ瘉宸茶繃鏈燂紝璇烽噸鏂扮櫥褰?);
         }
         
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.detail || '下载失败');
+            throw new Error(error.detail || '涓嬭浇澶辫触');
         }
         
-        // 获取文件名 - 支持 filename* 格式
+        // 鑾峰彇鏂囦欢鍚?- 鏀寔 filename* 鏍煎紡
         const contentDisposition = response.headers.get('content-disposition');
         let filename = 'download';
         if (contentDisposition) {
-            // 先尝试 filename*=UTF-8'' 格式
+            // 鍏堝皾璇?filename*=UTF-8'' 鏍煎紡
             const filenameStarMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
             if (filenameStarMatch) {
                 filename = decodeURIComponent(filenameStarMatch[1]);
             } else {
-                // 再尝试 filename="..." 格式
+                // 鍐嶅皾璇?filename="..." 鏍煎紡
                 const filenameMatch = contentDisposition.match(/filename="([^"]+)"/);
                 if (filenameMatch) {
                     filename = filenameMatch[1];
@@ -402,7 +517,7 @@ async function downloadDocument(docId) {
             }
         }
         
-        // 下载文件
+        // 涓嬭浇鏂囦欢
         const blob = await response.blob();
         const downloadUrl = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -413,7 +528,7 @@ async function downloadDocument(docId) {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(downloadUrl);
         
-        showToast('下载成功', 'success');
+        showToast('涓嬭浇鎴愬姛', 'success');
     } catch (error) {
         showToast(error.message, 'error');
         throw error;
@@ -433,19 +548,19 @@ async function previewDocument(docId) {
         
         if (response.status === 401) {
             logout();
-            throw new Error('认证已过期，请重新登录');
+            throw new Error('璁よ瘉宸茶繃鏈燂紝璇烽噸鏂扮櫥褰?);
         }
         
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.detail || '预览失败');
+            throw new Error(error.detail || '棰勮澶辫触');
         }
         
         const blob = await response.blob();
         const previewUrl = window.URL.createObjectURL(blob);
         window.open(previewUrl, '_blank');
         
-        // 延迟释放URL对象
+        // 寤惰繜閲婃斁URL瀵硅薄
         setTimeout(() => {
             window.URL.revokeObjectURL(previewUrl);
         }, 60000);
@@ -455,7 +570,7 @@ async function previewDocument(docId) {
     }
 }
 
-// ==================== 批复系统 ====================
+// ==================== 鎵瑰绯荤粺 ====================
 async function getComments(documentId) {
     const data = await apiRequest(`/api/comments/document/${documentId}`);
     return data?.comments || [];
@@ -488,18 +603,18 @@ async function updateCommentStatus(commentId, status) {
     
     if (response.status === 401) {
         logout();
-        throw new Error('认证已过期，请重新登录');
+        throw new Error('璁よ瘉宸茶繃鏈燂紝璇烽噸鏂扮櫥褰?);
     }
     
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.detail || '更新失败');
+        throw new Error(error.detail || '鏇存柊澶辫触');
     }
     
     return await response.json();
 }
 
-// ==================== 系统信息 ====================
+// ==================== 绯荤粺淇℃伅 ====================
 async function getCategories() {
     const data = await apiRequest('/api/categories');
     return data?.categories || [];
@@ -523,7 +638,7 @@ async function getCurrentUser() {
     return await apiRequest('/api/me');
 }
 
-// ==================== UI 工具函数 ====================
+// ==================== UI 宸ュ叿鍑芥暟 ====================
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -583,8 +698,7 @@ function formatDate(dateStr) {
 }
 
 function getFileIconClass(docOrFilename) {
-    // 支持文档对象或文件名字符串
-    const isFolder = typeof docOrFilename === 'object' && docOrFilename.is_folder;
+    // 鏀寔鏂囨。瀵硅薄鎴栨枃浠跺悕瀛楃涓?    const isFolder = typeof docOrFilename === 'object' && docOrFilename.is_folder;
     const filename = typeof docOrFilename === 'object' ? docOrFilename.original_filename || '' : docOrFilename;
 
     if (isFolder) {
@@ -607,8 +721,7 @@ function getFileIconClass(docOrFilename) {
 }
 
 function getFileIconHtml(docOrFilename) {
-    // 支持文档对象或文件名字符串
-    const isFolder = typeof docOrFilename === 'object' && docOrFilename.is_folder;
+    // 鏀寔鏂囨。瀵硅薄鎴栨枃浠跺悕瀛楃涓?    const isFolder = typeof docOrFilename === 'object' && docOrFilename.is_folder;
     const filename = typeof docOrFilename === 'object' ? docOrFilename.original_filename || '' : docOrFilename;
 
     if (isFolder) {
@@ -633,9 +746,9 @@ function getFileIconHtml(docOrFilename) {
 
 function getVisibilityBadge(visibility) {
     const badges = {
-        public: { class: 'badge-public', text: '公开', icon: 'fa-globe' },
-        department: { class: 'badge-department', text: '部门', icon: 'fa-building' },
-        private: { class: 'badge-private', text: '私有', icon: 'fa-lock' }
+        public: { class: 'badge-public', text: '鍏紑', icon: 'fa-globe' },
+        department: { class: 'badge-department', text: '閮ㄩ棬', icon: 'fa-building' },
+        private: { class: 'badge-private', text: '绉佹湁', icon: 'fa-lock' }
     };
     const badge = badges[visibility] || badges.private;
     return `<span class="badge ${badge.class}"><i class="fas ${badge.icon} mr-1"></i>${badge.text}</span>`;
@@ -643,15 +756,15 @@ function getVisibilityBadge(visibility) {
 
 function getLevelBadge(level) {
     const levelNames = {
-        0: '系统管理员',
-        1: '部门主管',
-        2: '普通员工',
-        3: '访客'
+        0: '绯荤粺绠＄悊鍛?,
+        1: '閮ㄩ棬涓荤',
+        2: '鏅€氬憳宸?,
+        3: '璁垮'
     };
-    return `<span class="level-badge level-${level}">${levelNames[level] || '未知'}</span>`;
+    return `<span class="level-badge level-${level}">${levelNames[level] || '鏈煡'}</span>`;
 }
 
-// ==================== 页面切换 ====================
+// ==================== 椤甸潰鍒囨崲 ====================
 function showLoginPage() {
     document.getElementById('login-page').classList.remove('hidden');
     document.getElementById('main-app').classList.add('hidden');
@@ -661,10 +774,10 @@ function showMainApp() {
     document.getElementById('login-page').classList.add('hidden');
     document.getElementById('main-app').classList.remove('hidden');
     
-    // 更新用户信息
+    // 鏇存柊鐢ㄦ埛淇℃伅
     updateUserInfo();
     
-    // 加载初始数据
+    // 鍔犺浇鍒濆鏁版嵁
     loadInitialData();
 }
 
@@ -672,29 +785,29 @@ function updateUserInfo() {
     if (!state.user) return;
     
     const levelNames = {
-        0: '系统管理员',
-        1: '部门主管',
-        2: '普通员工',
-        3: '访客'
+        0: '绯荤粺绠＄悊鍛?,
+        1: '閮ㄩ棬涓荤',
+        2: '鏅€氬憳宸?,
+        3: '璁垮'
     };
     
     document.getElementById('user-info-display').textContent = 
-        `${state.user.name} · ${state.user.department} · ${levelNames[state.user.level]}`;
+        `${state.user.name} 路 ${state.user.department} 路 ${levelNames[state.user.level]}`;
     document.getElementById('user-name-display').textContent = state.user.name;
     document.getElementById('user-avatar-initial').textContent = state.user.name.charAt(0).toUpperCase();
     document.getElementById('dropdown-user-name').textContent = state.user.name;
     document.getElementById('dropdown-user-role').textContent = levelNames[state.user.level];
     
-    // 根据权限显示/隐藏功能
+    // 鏍规嵁鏉冮檺鏄剧ず/闅愯棌鍔熻兘
     if (state.user.level <= 1) {
         document.getElementById('nav-users').classList.remove('hidden');
     }
 }
 
-// ==================== 数据加载 ====================
+// ==================== 鏁版嵁鍔犺浇 ====================
 async function loadInitialData() {
     try {
-        // 并行加载基础数据
+        // 骞惰鍔犺浇鍩虹鏁版嵁
         const [categories, levels, departments, stats] = await Promise.all([
             getCategories(),
             getUserLevels(),
@@ -707,33 +820,31 @@ async function loadInitialData() {
         state.departments = departments;
         state.stats = stats;
         
-        // 更新分类列表
+        // 鏇存柊鍒嗙被鍒楄〃
         updateCategoryList();
         
-        // 更新筛选器
+        // 鏇存柊绛涢€夊櫒
         updateFilters();
         
-        // 更新统计
+        // 鏇存柊缁熻
         updateStats();
         
-        // 加载文档
+        // 鍔犺浇鏂囨。
         await loadDocuments();
         
-        // 加载用户列表（如果有权限）
-        if (state.user.level <= 1) {
+        // 鍔犺浇鐢ㄦ埛鍒楄〃锛堝鏋滄湁鏉冮檺锛?        if (state.user.level <= 1) {
             await loadUsers();
         }
         
     } catch (error) {
-        console.error('加载初始数据失败:', error);
+        console.error('鍔犺浇鍒濆鏁版嵁澶辫触:', error);
     }
 }
 
 async function loadDocuments() {
     const filters = {};
     
-    // 根据当前视图添加筛选
-    if (state.currentView === 'my') {
+    // 鏍规嵁褰撳墠瑙嗗浘娣诲姞绛涢€?    if (state.currentView === 'my') {
         filters.owner_id = state.user.id;
     } else if (state.currentView === 'department') {
         filters.visibility = 'department';
@@ -743,15 +854,14 @@ async function loadDocuments() {
         filters.category = state.currentView;
     }
 
-    // 添加文件夹过滤
-    if (state.currentFolderId !== null) {
+    // 娣诲姞鏂囦欢澶硅繃婊?    if (state.currentFolderId !== null) {
         filters.parent_id = state.currentFolderId;
     } else {
-        // 根目录：parent_id为空
+        // 鏍圭洰褰曪細parent_id涓虹┖
         filters.parent_id = '';
     }
 
-    // 添加筛选器条件
+    // 娣诲姞绛涢€夊櫒鏉′欢
     const visibilityFilter = document.getElementById('filter-visibility');
     if (visibilityFilter.value) {
         filters.visibility = visibilityFilter.value;
@@ -785,17 +895,16 @@ function updateCategoryList() {
         </button>
     `).join('');
     
-    // 重新绑定事件
+    // 閲嶆柊缁戝畾浜嬩欢
     bindNavEvents();
 }
 
 function updateFilters() {
-    // 更新分类筛选
-    const categorySelect = document.getElementById('filter-category');
-    categorySelect.innerHTML = '<option value="">所有分类</option>' + 
+    // 鏇存柊鍒嗙被绛涢€?    const categorySelect = document.getElementById('filter-category');
+    categorySelect.innerHTML = '<option value="">鎵€鏈夊垎绫?/option>' + 
         state.categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
     
-    // 更新上传表单中的分类
+    // 鏇存柊涓婁紶琛ㄥ崟涓殑鍒嗙被
     const uploadCategory = document.querySelector('select[name="category"]');
     if (uploadCategory) {
         uploadCategory.innerHTML = state.categories.map(cat => 
@@ -803,7 +912,7 @@ function updateFilters() {
         ).join('');
     }
     
-    // 更新部门选择
+    // 鏇存柊閮ㄩ棬閫夋嫨
     const deptSelect = document.querySelector('select[name="department"]');
     if (deptSelect) {
         deptSelect.innerHTML = state.departments.map(dept => 
@@ -823,7 +932,7 @@ function updateStats() {
     document.getElementById('stat-total-comments').textContent = state.stats.total_comments;
     document.getElementById('stat-storage').textContent = formatFileSize(state.stats.storage_used);
     
-    // 分类统计
+    // 鍒嗙被缁熻
     const categoryStats = document.getElementById('category-stats');
     const catData = state.stats.documents_by_category || {};
     const total = state.stats.total_documents || 1;
@@ -843,11 +952,10 @@ function updateStats() {
         `;
     }).join('');
     
-    // 可见性统计
-    const visibilityStats = document.getElementById('visibility-stats');
+    // 鍙鎬х粺璁?    const visibilityStats = document.getElementById('visibility-stats');
     const visData = state.stats.documents_by_visibility || {};
     const visColors = { public: 'bg-green-500', department: 'bg-blue-500', private: 'bg-red-500' };
-    const visNames = { public: '公开', department: '部门', private: '私有' };
+    const visNames = { public: '鍏紑', department: '閮ㄩ棬', private: '绉佹湁' };
     
     visibilityStats.innerHTML = Object.entries(visData).map(([vis, count]) => {
         const percent = (count / total * 100).toFixed(1);
@@ -865,7 +973,7 @@ function updateStats() {
     }).join('');
 }
 
-// ==================== 渲染函数 ====================
+// ==================== 娓叉煋鍑芥暟 ====================
 function renderDocuments() {
     const gridContainer = document.getElementById('documents-grid');
     const listContainer = document.getElementById('documents-list-body');
@@ -881,7 +989,7 @@ function renderDocuments() {
     
     emptyState.classList.add('hidden');
     
-    // 渲染网格视图
+    // 娓叉煋缃戞牸瑙嗗浘
     gridContainer.innerHTML = state.documents.map(doc => `
         <div class="document-card bg-white rounded-xl shadow-card border border-slate-200 overflow-hidden cursor-pointer ${state.selectedDocument?.id === doc.id ? 'selected' : ''}" 
              data-id="${doc.id}">
@@ -894,7 +1002,7 @@ function renderDocuments() {
                 </div>
                 
                 <h4 class="font-semibold text-slate-800 mb-1 truncate" title="${doc.title}">${doc.title}</h4>
-                <p class="text-sm text-slate-500 mb-3 line-clamp-2">${doc.description || '无描述'}</p>
+                <p class="text-sm text-slate-500 mb-3 line-clamp-2">${doc.description || '鏃犳弿杩?}</p>
                 
                 <div class="flex items-center justify-between text-xs text-slate-400">
                     <span>${doc.owner_name}</span>
@@ -902,21 +1010,21 @@ function renderDocuments() {
                 </div>
                 
                 <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-                    <span class="text-xs text-slate-500">${doc.is_folder ? '文件夹' : formatFileSize(doc.file_size)}</span>
+                    <span class="text-xs text-slate-500">${doc.is_folder ? '鏂囦欢澶? : formatFileSize(doc.file_size)}</span>
                     <div class="flex space-x-2">
-                        <button class="btn-preview text-blue-600 hover:text-blue-800 p-1" title="预览">
+                        <button class="btn-preview text-blue-600 hover:text-blue-800 p-1" title="棰勮">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <button class="btn-download text-green-600 hover:text-green-800 p-1" title="下载">
+                        <button class="btn-download text-green-600 hover:text-green-800 p-1" title="涓嬭浇">
                             <i class="fas fa-download"></i>
                         </button>
                         ${canEditDocument(doc) ? `
-                        <button class="btn-edit text-amber-600 hover:text-amber-800 p-1" title="编辑">
+                        <button class="btn-edit text-amber-600 hover:text-amber-800 p-1" title="缂栬緫">
                             <i class="fas fa-edit"></i>
                         </button>
                         ` : ''}
                         ${canDeleteDocument(doc) ? `
-                        <button class="btn-delete text-red-600 hover:text-red-800 p-1" title="删除">
+                        <button class="btn-delete text-red-600 hover:text-red-800 p-1" title="鍒犻櫎">
                             <i class="fas fa-trash"></i>
                         </button>
                         ` : ''}
@@ -926,7 +1034,7 @@ function renderDocuments() {
         </div>
     `).join('');
     
-    // 渲染列表视图
+    // 娓叉煋鍒楄〃瑙嗗浘
     listContainer.innerHTML = state.documents.map(doc => `
         <tr class="border-b border-slate-100 hover:bg-slate-50" data-id="${doc.id}">
             <td class="px-4 py-3">
@@ -936,7 +1044,7 @@ function renderDocuments() {
                     </div>
                     <div>
                         <p class="font-medium text-slate-800">${doc.title}</p>
-                        <p class="text-xs text-slate-500">${doc.is_folder ? '文件夹' : doc.original_filename}</p>
+                        <p class="text-xs text-slate-500">${doc.is_folder ? '鏂囦欢澶? : doc.original_filename}</p>
                     </div>
                 </div>
             </td>
@@ -956,19 +1064,19 @@ function renderDocuments() {
             </td>
             <td class="px-4 py-3 text-right">
                 <div class="flex justify-end space-x-1">
-                    <button class="btn-preview text-blue-600 hover:text-blue-800 p-1.5 rounded hover:bg-blue-50" title="预览">
+                    <button class="btn-preview text-blue-600 hover:text-blue-800 p-1.5 rounded hover:bg-blue-50" title="棰勮">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-download text-green-600 hover:text-green-800 p-1.5 rounded hover:bg-green-50" title="下载">
+                    <button class="btn-download text-green-600 hover:text-green-800 p-1.5 rounded hover:bg-green-50" title="涓嬭浇">
                         <i class="fas fa-download"></i>
                     </button>
                     ${canEditDocument(doc) ? `
-                    <button class="btn-edit text-amber-600 hover:text-amber-800 p-1.5 rounded hover:bg-amber-50" title="编辑">
+                    <button class="btn-edit text-amber-600 hover:text-amber-800 p-1.5 rounded hover:bg-amber-50" title="缂栬緫">
                         <i class="fas fa-edit"></i>
                     </button>
                     ` : ''}
                     ${canDeleteDocument(doc) ? `
-                    <button class="btn-delete text-red-600 hover:text-red-800 p-1.5 rounded hover:bg-red-50" title="删除">
+                    <button class="btn-delete text-red-600 hover:text-red-800 p-1.5 rounded hover:bg-red-50" title="鍒犻櫎">
                         <i class="fas fa-trash"></i>
                     </button>
                     ` : ''}
@@ -977,7 +1085,7 @@ function renderDocuments() {
         </tr>
     `).join('');
     
-    // 绑定事件
+    // 缁戝畾浜嬩欢
     bindDocumentEvents();
 }
 
@@ -993,7 +1101,7 @@ function renderUsers() {
                     </div>
                     <div>
                         <p class="font-medium text-slate-800">${user.name}</p>
-                        <p class="text-xs text-slate-500">${user.username} · ${user.employee_id}</p>
+                        <p class="text-xs text-slate-500">${user.username} 路 ${user.employee_id}</p>
                     </div>
                 </div>
             </td>
@@ -1005,7 +1113,7 @@ function renderUsers() {
             </td>
             <td class="px-4 py-3">
                 <span class="status-indicator ${user.is_active ? 'status-active' : 'status-inactive'}"></span>
-                <span class="text-sm text-slate-600 ml-1">${user.is_active ? '正常' : '禁用'}</span>
+                <span class="text-sm text-slate-600 ml-1">${user.is_active ? '姝ｅ父' : '绂佺敤'}</span>
             </td>
             <td class="px-4 py-3 text-right">
                 <button class="btn-edit-user text-blue-600 hover:text-blue-800 p-1.5 rounded hover:bg-blue-50" data-id="${user.id}">
@@ -1024,7 +1132,7 @@ function renderComments() {
         container.innerHTML = `
             <div class="text-center text-slate-400 py-10">
                 <i class="fas fa-comments text-4xl mb-3"></i>
-                <p>请选择文档查看批复</p>
+                <p>璇烽€夋嫨鏂囨。鏌ョ湅鎵瑰</p>
             </div>
         `;
         inputArea.classList.add('hidden');
@@ -1037,8 +1145,8 @@ function renderComments() {
         container.innerHTML = `
             <div class="text-center text-slate-400 py-10">
                 <i class="fas fa-comment-slash text-4xl mb-3"></i>
-                <p>暂无批复</p>
-                <p class="text-sm mt-1">添加第一条批复</p>
+                <p>鏆傛棤鎵瑰</p>
+                <p class="text-sm mt-1">娣诲姞绗竴鏉℃壒澶?/p>
             </div>
         `;
         return;
@@ -1047,7 +1155,7 @@ function renderComments() {
     container.innerHTML = state.comments.map(comment => {
         const isOwn = comment.user_id === state.user.id;
         const mentionsHtml = comment.mentions?.length > 0 
-            ? `<p class="text-xs text-slate-400 mt-1">提及: ${comment.mentions.map(id => {
+            ? `<p class="text-xs text-slate-400 mt-1">鎻愬強: ${comment.mentions.map(id => {
                 const user = state.users.find(u => u.id === id);
                 return user ? `@${user.name}` : '';
             }).filter(Boolean).join(', ')}</p>` 
@@ -1066,11 +1174,11 @@ function renderComments() {
                 ${mentionsHtml}
                 <div class="mt-2 flex items-center space-x-2">
                     <span class="text-xs px-2 py-0.5 rounded ${comment.status === 'resolved' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">
-                        ${comment.status === 'resolved' ? '已解决' : '待处理'}
+                        ${comment.status === 'resolved' ? '宸茶В鍐? : '寰呭鐞?}
                     </span>
                     ${canManageComment(comment) ? `
                     <button class="btn-toggle-status text-xs text-blue-600 hover:text-blue-800" data-id="${comment.id}" data-status="${comment.status === 'resolved' ? 'pending' : 'resolved'}">
-                        ${comment.status === 'resolved' ? '标记待处理' : '标记已解决'}
+                        ${comment.status === 'resolved' ? '鏍囪寰呭鐞? : '鏍囪宸茶В鍐?}
                     </button>
                     ` : ''}
                 </div>
@@ -1078,7 +1186,7 @@ function renderComments() {
         `;
     }).join('');
     
-    // 绑定批复事件
+    // 缁戝畾鎵瑰浜嬩欢
     container.querySelectorAll('.btn-toggle-status').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             const commentId = e.target.dataset.id;
@@ -1093,7 +1201,7 @@ function highlightMentions(content) {
     return content.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
 }
 
-// ==================== 权限检查 ====================
+// ==================== 鏉冮檺妫€鏌?====================
 function canEditDocument(doc) {
     if (state.user.level === 0) return true;
     if (doc.owner_id === state.user.id) return true;
@@ -1115,32 +1223,30 @@ function canManageComment(comment) {
     return false;
 }
 
-// ==================== 事件绑定 ====================
+// ==================== 浜嬩欢缁戝畾 ====================
 function bindNavEvents() {
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', async () => {
-            // 移除所有激活状态
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            // 绉婚櫎鎵€鏈夋縺娲荤姸鎬?            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             item.classList.add('active');
             
             const view = item.dataset.view;
             state.currentView = view;
             
-            // 隐藏所有视图
-            document.getElementById('documents-grid').classList.add('hidden');
+            // 闅愯棌鎵€鏈夎鍥?            document.getElementById('documents-grid').classList.add('hidden');
             document.getElementById('documents-list').classList.add('hidden');
             document.getElementById('users-view').classList.add('hidden');
             document.getElementById('stats-view').classList.add('hidden');
             document.getElementById('empty-state').classList.add('hidden');
             
-            // 更新标题
+            // 鏇存柊鏍囬
             const titles = {
-                'all': '全部文档',
-                'my': '我的文档',
-                'department': '部门文档',
-                'public': '公开文档',
-                'users': '用户管理',
-                'stats': '统计报表'
+                'all': '鍏ㄩ儴鏂囨。',
+                'my': '鎴戠殑鏂囨。',
+                'department': '閮ㄩ棬鏂囨。',
+                'public': '鍏紑鏂囨。',
+                'users': '鐢ㄦ埛绠＄悊',
+                'stats': '缁熻鎶ヨ〃'
             };
             document.getElementById('page-title').textContent = titles[view] || view;
             
@@ -1152,7 +1258,7 @@ function bindNavEvents() {
                 state.stats = await getStats();
                 updateStats();
             } else {
-                // 显示文档视图
+                // 鏄剧ず鏂囨。瑙嗗浘
                 if (state.viewMode === 'grid') {
                     document.getElementById('documents-grid').classList.remove('hidden');
                 } else {
@@ -1165,33 +1271,32 @@ function bindNavEvents() {
 }
 
 function bindDocumentEvents() {
-    // 文档卡片点击
+    // 鏂囨。鍗＄墖鐐瑰嚮
     document.querySelectorAll('.document-card, #documents-list-body tr').forEach(el => {
         el.addEventListener('click', async (e) => {
-            // 如果点击的是按钮，不触发选择
+            // 濡傛灉鐐瑰嚮鐨勬槸鎸夐挳锛屼笉瑙﹀彂閫夋嫨
             if (e.target.closest('button')) return;
 
             const docId = el.dataset.id;
             const doc = state.documents.find(d => d.id === docId);
 
-            // 如果是文件夹，进入文件夹
+            // 濡傛灉鏄枃浠跺す锛岃繘鍏ユ枃浠跺す
             if (doc && doc.is_folder) {
                 await enterFolder(docId, doc.title);
             } else {
-                // 否则选择文档
+                // 鍚﹀垯閫夋嫨鏂囨。
                 state.selectedDocument = doc;
 
-                // 更新选中状态
-                document.querySelectorAll('.document-card').forEach(c => c.classList.remove('selected'));
+                // 鏇存柊閫変腑鐘舵€?                document.querySelectorAll('.document-card').forEach(c => c.classList.remove('selected'));
                 document.querySelector(`.document-card[data-id="${docId}"]`)?.classList.add('selected');
 
-                // 加载批复
+                // 鍔犺浇鎵瑰
                 await refreshComments();
             }
         });
     });
     
-    // 预览按钮
+    // 棰勮鎸夐挳
     document.querySelectorAll('.btn-preview').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1200,7 +1305,7 @@ function bindDocumentEvents() {
         });
     });
     
-    // 下载按钮
+    // 涓嬭浇鎸夐挳
     document.querySelectorAll('.btn-download').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1209,7 +1314,7 @@ function bindDocumentEvents() {
         });
     });
     
-    // 编辑按钮
+    // 缂栬緫鎸夐挳
     document.querySelectorAll('.btn-edit').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1218,16 +1323,16 @@ function bindDocumentEvents() {
         });
     });
     
-    // 删除按钮
+    // 鍒犻櫎鎸夐挳
     document.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
             const docId = e.target.closest('[data-id]').dataset.id;
             const doc = state.documents.find(d => d.id === docId);
             
-            if (confirm(`确定要删除文档 "${doc.title}" 吗？此操作不可恢复。`)) {
+            if (confirm(`纭畾瑕佸垹闄ゆ枃妗?"${doc.title}" 鍚楋紵姝ゆ搷浣滀笉鍙仮澶嶃€俙)) {
                 await deleteDocument(docId);
-                showToast('文档已删除', 'success');
+                showToast('鏂囨。宸插垹闄?, 'success');
                 await loadDocuments();
             }
         });
@@ -1242,7 +1347,7 @@ async function refreshComments() {
     }
 }
 
-// ==================== 模态框 ====================
+// ==================== 妯℃€佹 ====================
 function showModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.classList.remove('hidden');
@@ -1259,20 +1364,19 @@ function showEditDocumentModal(docId) {
     const doc = state.documents.find(d => d.id === docId);
     if (!doc) return;
     
-    // 可以扩展为编辑模态框
-    showToast('编辑功能开发中...', 'info');
+    // 鍙互鎵╁睍涓虹紪杈戞ā鎬佹
+    showToast('缂栬緫鍔熻兘寮€鍙戜腑...', 'info');
 }
 
-// ==================== 初始化 ====================
+// ==================== 鍒濆鍖?====================
 function init() {
-    // 检查登录状态
-    if (state.token && state.user) {
+    // 妫€鏌ョ櫥褰曠姸鎬?    if (state.token && state.user) {
         showMainApp();
     } else {
         showLoginPage();
     }
     
-    // 登录表单
+    // 鐧诲綍琛ㄥ崟
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('login-username').value;
@@ -1281,34 +1385,32 @@ function init() {
         try {
             const success = await login(username, password);
             if (success) {
-                showToast('登录成功', 'success');
+                showToast('鐧诲綍鎴愬姛', 'success');
                 showMainApp();
             }
         } catch (error) {
-            // 错误已在 apiRequest 中处理
-        }
+            // 閿欒宸插湪 apiRequest 涓鐞?        }
     });
     
-    // 用户菜单
+    // 鐢ㄦ埛鑿滃崟
     document.getElementById('user-menu-btn').addEventListener('click', () => {
         document.getElementById('user-dropdown').classList.toggle('hidden');
     });
     
-    // 点击外部关闭下拉菜单
+    // 鐐瑰嚮澶栭儴鍏抽棴涓嬫媺鑿滃崟
     document.addEventListener('click', (e) => {
         if (!e.target.closest('#user-menu-container')) {
             document.getElementById('user-dropdown').classList.add('hidden');
         }
     });
     
-    // 退出登录
-    document.getElementById('menu-logout').addEventListener('click', (e) => {
+    // 閫€鍑虹櫥褰?    document.getElementById('menu-logout').addEventListener('click', (e) => {
         e.preventDefault();
         logout();
-        showToast('已退出登录', 'info');
+        showToast('宸查€€鍑虹櫥褰?, 'info');
     });
     
-    // 修改密码
+    // 淇敼瀵嗙爜
     document.getElementById('menu-change-password').addEventListener('click', (e) => {
         e.preventDefault();
         showModal('change-password-modal');
@@ -1322,21 +1424,20 @@ function init() {
         const confirmPassword = formData.get('confirm_password');
         
         if (newPassword !== confirmPassword) {
-            showToast('两次输入的新密码不一致', 'error');
+            showToast('涓ゆ杈撳叆鐨勬柊瀵嗙爜涓嶄竴鑷?, 'error');
             return;
         }
         
         try {
             await changePassword(oldPassword, newPassword);
-            showToast('密码修改成功', 'success');
+            showToast('瀵嗙爜淇敼鎴愬姛', 'success');
             hideModal('change-password-modal');
             e.target.reset();
         } catch (error) {
-            // 错误已处理
-        }
+            // 閿欒宸插鐞?        }
     });
     
-    // 关闭模态框
+    // 鍏抽棴妯℃€佹
     document.querySelectorAll('.close-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             btn.closest('.fixed').classList.add('hidden');
@@ -1344,7 +1445,7 @@ function init() {
         });
     });
     
-    // 视图切换
+    // 瑙嗗浘鍒囨崲
     document.getElementById('view-grid').addEventListener('click', () => {
         state.viewMode = 'grid';
         document.getElementById('view-grid').classList.add('bg-white', 'shadow-sm', 'text-slate-700');
@@ -1365,26 +1466,22 @@ function init() {
         document.getElementById('documents-grid').classList.add('hidden');
     });
     
-    // 上传按钮
+    // 涓婁紶鎸夐挳
     document.getElementById('btn-upload').addEventListener('click', () => {
         showModal('upload-modal');
     });
 
-    // 新建文件夹按钮
-    document.getElementById('btn-new-folder').addEventListener('click', () => {
-        // 加载文件夹列表到父文件夹选择器
-        loadFolderOptions();
+    // 鏂板缓鏂囦欢澶规寜閽?    document.getElementById('btn-new-folder').addEventListener('click', () => {
+        // 鍔犺浇鏂囦欢澶瑰垪琛ㄥ埌鐖舵枃浠跺す閫夋嫨鍣?        loadFolderOptions();
         showModal('new-folder-modal');
     });
 
-    // 上传文件夹按钮
-    document.getElementById('btn-upload-folder').addEventListener('click', () => {
-        // 加载文件夹列表到父文件夹选择器
-        loadFolderOptions();
+    // 涓婁紶鏂囦欢澶规寜閽?    document.getElementById('btn-upload-folder').addEventListener('click', () => {
+        // 鍔犺浇鏂囦欢澶瑰垪琛ㄥ埌鐖舵枃浠跺す閫夋嫨鍣?        loadFolderOptions();
         showModal('upload-folder-modal');
     });
 
-    // 拖拽上传
+    // 鎷栨嫿涓婁紶
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('upload-file-input');
     let selectedFile = null;
@@ -1431,11 +1528,11 @@ function init() {
     
     function updateSelectedFileName(name) {
         const el = document.getElementById('selected-file-name');
-        el.textContent = `已选择: ${name}`;
+        el.textContent = `宸查€夋嫨: ${name}`;
         el.classList.remove('hidden');
     }
 
-    // 上传文件夹的拖拽和文件选择
+    // 涓婁紶鏂囦欢澶圭殑鎷栨嫿鍜屾枃浠堕€夋嫨
     const folderDropZone = document.getElementById('folder-drop-zone');
     const folderFileInput = document.getElementById('upload-folder-input');
 
@@ -1471,8 +1568,8 @@ function init() {
                 if (item.kind === 'file') {
                     const entry = item.webkitGetAsEntry();
                     if (entry && entry.isDirectory) {
-                        // 处理目录
-                        showToast('请使用文件选择按钮选择文件夹', 'warning');
+                        // 澶勭悊鐩綍
+                        showToast('璇蜂娇鐢ㄦ枃浠堕€夋嫨鎸夐挳閫夋嫨鏂囦欢澶?, 'warning');
                         return;
                     }
                 }
@@ -1481,8 +1578,7 @@ function init() {
 
         const droppedFiles = e.dataTransfer.files;
         if (droppedFiles.length > 0) {
-            // 设置文件输入的文件
-            const dataTransfer = new DataTransfer();
+            // 璁剧疆鏂囦欢杈撳叆鐨勬枃浠?            const dataTransfer = new DataTransfer();
             for (let i = 0; i < droppedFiles.length; i++) {
                 dataTransfer.items.add(droppedFiles[i]);
             }
@@ -1504,10 +1600,9 @@ function init() {
         const filesCountEl = document.getElementById('selected-files-count');
         const filesListEl = document.getElementById('selected-files-list');
 
-        // 显示文件夹信息
-        if (files.length > 0) {
-            // 尝试从文件路径中获取文件夹名
-            let folderName = '选择的文件';
+        // 鏄剧ず鏂囦欢澶逛俊鎭?        if (files.length > 0) {
+            // 灏濊瘯浠庢枃浠惰矾寰勪腑鑾峰彇鏂囦欢澶瑰悕
+            let folderName = '閫夋嫨鐨勬枃浠?;
             if (files[0].webkitRelativePath) {
                 const pathParts = files[0].webkitRelativePath.split('/');
                 if (pathParts.length > 1) {
@@ -1515,11 +1610,10 @@ function init() {
                 }
             }
 
-            folderNameEl.textContent = `文件夹: ${folderName}`;
-            filesCountEl.textContent = `文件数量: ${files.length} 个`;
+            folderNameEl.textContent = `鏂囦欢澶? ${folderName}`;
+            filesCountEl.textContent = `鏂囦欢鏁伴噺: ${files.length} 涓猔;
 
-            // 显示前10个文件
-            filesListEl.innerHTML = '';
+            // 鏄剧ず鍓?0涓枃浠?            filesListEl.innerHTML = '';
             const maxFilesToShow = 10;
             for (let i = 0; i < Math.min(files.length, maxFilesToShow); i++) {
                 const li = document.createElement('li');
@@ -1528,7 +1622,7 @@ function init() {
             }
             if (files.length > maxFilesToShow) {
                 const li = document.createElement('li');
-                li.textContent = `... 还有 ${files.length - maxFilesToShow} 个文件`;
+                li.textContent = `... 杩樻湁 ${files.length - maxFilesToShow} 涓枃浠禶;
                 filesListEl.appendChild(li);
             }
 
@@ -1536,36 +1630,35 @@ function init() {
         } else {
             infoDiv.classList.add('hidden');
         }
-    }
+    }/*
 
-    // 上传表单
+
+    // 涓婁紶琛ㄥ崟
     document.getElementById('upload-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         e.stopPropagation();
         
-        // 获取表单数据
+        // 鑾峰彇琛ㄥ崟鏁版嵁
         const title = document.getElementById('upload-title').value.trim();
         const description = document.getElementById('upload-description').value.trim();
         const category = document.getElementById('upload-category').value;
         const visibility = document.getElementById('upload-visibility').value;
         
-        // 检查标题
-        if (!title) {
-            showToast('请输入文档标题', 'error');
+        // 妫€鏌ユ爣棰?        if (!title) {
+            showToast('璇疯緭鍏ユ枃妗ｆ爣棰?, 'error');
             return;
         }
         
-        // 检查是否有文件
+        // 妫€鏌ユ槸鍚︽湁鏂囦欢
         const file = selectedFile;
         if (!file) {
-            showToast('请选择要上传的文件', 'error');
+            showToast('璇烽€夋嫨瑕佷笂浼犵殑鏂囦欢', 'error');
             return;
         }
         
         console.log('Uploading file:', file.name, file.type, file.size);
         
-        // 创建 FormData - 注意顺序，file 必须是最后一个字段
-        const formData = new FormData();
+        // 鍒涘缓 FormData - 娉ㄦ剰椤哄簭锛宖ile 蹇呴』鏄渶鍚庝竴涓瓧娈?        const formData = new FormData();
         formData.append('title', title);
         formData.append('description', description);
         formData.append('category', category);
@@ -1573,23 +1666,24 @@ function init() {
         formData.append('file', file, file.name);
         
         try {
-            showToast('正在上传...', 'info');
+            showToast('姝ｅ湪涓婁紶...', 'info');
             await uploadDocument(formData);
-            showToast('文档上传成功', 'success');
+            showToast('鏂囨。涓婁紶鎴愬姛', 'success');
             hideModal('upload-modal');
             
-            // 重置表单
+            // 閲嶇疆琛ㄥ崟
             document.getElementById('upload-form').reset();
             selectedFile = null;
             document.getElementById('selected-file-name').classList.add('hidden');
             
             await loadDocuments();
         } catch (error) {
-            console.error('上传失败:', error);
+            console.error('涓婁紶澶辫触:', error);
         }
-    });
+    })
+*/;
     
-    // 添加用户
+    // 娣诲姞鐢ㄦ埛
     document.getElementById('btn-add-user').addEventListener('click', () => {
         showModal('add-user-modal');
     });
@@ -1610,17 +1704,15 @@ function init() {
         
         try {
             await createUser(userData);
-            showToast('用户创建成功', 'success');
+            showToast('鐢ㄦ埛鍒涘缓鎴愬姛', 'success');
             hideModal('add-user-modal');
             e.target.reset();
             await loadUsers();
         } catch (error) {
-            // 错误已处理
-        }
+            // 閿欒宸插鐞?        }
     });
 
-    // 新建文件夹表单
-    document.getElementById('new-folder-form').addEventListener('submit', async (e) => {
+    // 鏂板缓鏂囦欢澶硅〃鍗?    document.getElementById('new-folder-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const title = document.getElementById('folder-name').value.trim();
@@ -1630,12 +1722,12 @@ function init() {
         const parentId = document.getElementById('folder-parent').value || null;
 
         if (!title) {
-            showToast('请输入文件夹名称', 'error');
+            showToast('璇疯緭鍏ユ枃浠跺す鍚嶇О', 'error');
             return;
         }
 
         try {
-            showToast('正在创建文件夹...', 'info');
+            showToast('姝ｅ湪鍒涘缓鏂囦欢澶?..', 'info');
             await createFolder({
                 title,
                 description,
@@ -1646,17 +1738,15 @@ function init() {
                 folder_path: ''
             });
 
-            showToast('文件夹创建成功', 'success');
+            showToast('鏂囦欢澶瑰垱寤烘垚鍔?, 'success');
             hideModal('new-folder-modal');
             e.target.reset();
             await loadDocuments();
         } catch (error) {
-            // 错误已在 apiRequest 中处理
-        }
+            // 閿欒宸插湪 apiRequest 涓鐞?        }
     });
 
-    // 上传文件夹表单
-    document.getElementById('upload-folder-form').addEventListener('submit', async (e) => {
+    // 涓婁紶鏂囦欢澶硅〃鍗?    document.getElementById('upload-folder-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const folderName = document.getElementById('upload-folder-name').value.trim();
@@ -1666,19 +1756,19 @@ function init() {
         const parentId = document.getElementById('upload-folder-parent').value || null;
 
         if (!folderName) {
-            showToast('请输入文件夹名称', 'error');
+            showToast('璇疯緭鍏ユ枃浠跺す鍚嶇О', 'error');
             return;
         }
 
-        // 检查是否有文件被选择
+        // 妫€鏌ユ槸鍚︽湁鏂囦欢琚€夋嫨
         const fileInput = document.getElementById('upload-folder-input');
         if (!fileInput.files || fileInput.files.length === 0) {
-            showToast('请选择要上传的文件夹', 'error');
+            showToast('璇烽€夋嫨瑕佷笂浼犵殑鏂囦欢澶?, 'error');
             return;
         }
 
         try {
-            showToast('正在上传文件夹...', 'info');
+            showToast('姝ｅ湪涓婁紶鏂囦欢澶?..', 'info');
 
             const formData = new FormData();
             formData.append('folder_name', folderName);
@@ -1689,11 +1779,11 @@ function init() {
                 formData.append('parent_id', parentId);
             }
 
-            // 添加所有文件到FormData
+            // 娣诲姞鎵€鏈夋枃浠跺埌FormData
             const files = fileInput.files;
             for (let i = 0; i < files.length; i++) {
                 formData.append('files', files[i]);
-                // 添加相对路径（如果可用）
+                // 娣诲姞鐩稿璺緞锛堝鏋滃彲鐢級
                 if (files[i].webkitRelativePath) {
                     formData.append('file_paths', files[i].webkitRelativePath);
                 } else {
@@ -1702,45 +1792,44 @@ function init() {
             }
 
             const result = await uploadFolder(formData);
-            showToast(`文件夹上传成功，共${result.file_count}个文件`, 'success');
+            showToast(`鏂囦欢澶逛笂浼犳垚鍔燂紝鍏?{result.file_count}涓枃浠禶, 'success');
             hideModal('upload-folder-modal');
             e.target.reset();
-            // 重置文件输入
+            // 閲嶇疆鏂囦欢杈撳叆
             fileInput.value = '';
             document.getElementById('selected-folder-info').classList.add('hidden');
             await loadDocuments();
         } catch (error) {
-            // 错误已在 apiRequest 中处理
-        }
+            // 閿欒宸插湪 apiRequest 涓鐞?        }
     });
 
-    // 筛选器
+    // 绛涢€夊櫒
     document.getElementById('filter-visibility').addEventListener('change', loadDocuments);
     document.getElementById('filter-category').addEventListener('change', loadDocuments);
     
-    // 搜索
+    // 鎼滅储
     let searchTimeout;
     document.getElementById('global-search').addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(loadDocuments, 300);
     });
     
-    // 提交批复
+    // 鎻愪氦鎵瑰
     document.getElementById('btn-submit-comment').addEventListener('click', async () => {
         const input = document.getElementById('comment-input');
         const content = input.value.trim();
         
         if (!content) {
-            showToast('请输入批复内容', 'warning');
+            showToast('璇疯緭鍏ユ壒澶嶅唴瀹?, 'warning');
             return;
         }
         
         if (!state.selectedDocument) {
-            showToast('请先选择文档', 'warning');
+            showToast('璇峰厛閫夋嫨鏂囨。', 'warning');
             return;
         }
         
-        // 提取@提及
+        // 鎻愬彇@鎻愬強
         const mentions = [];
         const mentionMatches = content.match(/@(\w+)/g);
         if (mentionMatches) {
@@ -1755,17 +1844,336 @@ function init() {
         
         try {
             await createComment(state.selectedDocument.id, content, mentions);
-            showToast('批复已添加', 'success');
+            showToast('鎵瑰宸叉坊鍔?, 'success');
             input.value = '';
             await refreshComments();
         } catch (error) {
-            // 错误已处理
-        }
+            // 閿欒宸插鐞?        }
     });
     
-    // 初始绑定导航事件
+    // 鍒濆缁戝畾瀵艰埅浜嬩欢
     bindNavEvents();
 }
 
-// 页面加载完成后初始化
+// 椤甸潰鍔犺浇瀹屾垚鍚庡垵濮嬪寲
 document.addEventListener('DOMContentLoaded', init);
+
+
+
+
+
+// ========== 额外的上传功能代码（覆盖旧逻辑） ==========
+
+// 等待 DOM 加载完成后覆盖上传相关的事件处理
+document.addEventListener('DOMContentLoaded', function() {
+    // 延迟执行，确保在 init() 之后
+    setTimeout(() => {
+        overrideUploadHandlers();
+    }, 100);
+});
+
+function overrideUploadHandlers() {
+    // 覆盖上传按钮点击事件
+    const btnUpload = document.getElementById('btn-upload');
+    if (btnUpload) {
+        btnUpload.onclick = () => {
+            selectedFiles = [];
+            updateSelectedFilesUI();
+            
+            // 显示当前文件夹位置
+            const locationHint = document.getElementById('upload-location-hint');
+            const locationName = document.getElementById('upload-location-name');
+            if (locationHint && locationName) {
+                if (state.currentFolderId) {
+                    const currentFolder = state.documents.find(d => d.id === state.currentFolderId);
+                    locationHint.classList.remove('hidden');
+                    locationName.textContent = currentFolder ? currentFolder.title : '当前文件夹';
+                } else {
+                    locationHint.classList.add('hidden');
+                }
+            }
+            
+            showModal('upload-modal');
+        };
+    }
+    
+    // 覆盖拖拽区域事件
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('upload-file-input');
+    
+    if (dropZone) {
+        dropZone.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (fileInput) fileInput.click();
+        };
+        
+        dropZone.ondragover = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('border-blue-400', 'bg-blue-50');
+        };
+        
+        dropZone.ondragleave = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('border-blue-400', 'bg-blue-50');
+        };
+        
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('border-blue-400', 'bg-blue-50');
+            
+            const files = Array.from(e.dataTransfer.files);
+            if (files.length > 0) {
+                addFilesToSelection(files);
+            }
+        };
+    }
+    
+    if (fileInput) {
+        fileInput.onchange = (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                addFilesToSelection(files);
+            }
+            fileInput.value = '';
+        };
+    }
+    
+    // 清空文件列表按钮
+    const btnClear = document.getElementById('btn-clear-files');
+    if (btnClear) {
+        btnClear.onclick = () => {
+            selectedFiles = [];
+            updateSelectedFilesUI();
+        };
+    }
+    
+    // 取消所有上传按钮
+    const btnCancelAll = document.getElementById('btn-cancel-all-uploads');
+    if (btnCancelAll) {
+        btnCancelAll.onclick = () => {
+            uploadManager.cancelAll();
+        };
+    }
+    
+    // 覆盖上传表单提交
+    const uploadForm = document.getElementById('upload-form');
+    if (uploadForm) {
+        uploadForm.onsubmit = async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (selectedFiles.length === 0) {
+                showToast('请选择要上传的文件', 'error');
+                return;
+            }
+            
+            const category = document.getElementById('upload-category').value;
+            const visibility = document.getElementById('upload-visibility').value;
+            
+            // 创建上传进度项
+            const progressList = document.getElementById('upload-progress-list');
+            if (!progressList) {
+                showToast('上传面板未找到', 'error');
+                return;
+            }
+            
+            const uploadId = 'batch_' + Date.now();
+            
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.id = `upload-item-${uploadId}-${index}`;
+                item.className = 'bg-slate-50 rounded-lg p-3 mb-2';
+                item.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-slate-700 truncate flex-1 mr-2" title="${file.name}">${file.name}</span>
+                        <span class="text-xs text-slate-400 status-text">等待中...</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-1">
+                        <div class="progress-bar bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-400">
+                        <span class="progress-text">0%</span>
+                        <span class="speed-text"></span>
+                    </div>
+                `;
+                progressList.appendChild(item);
+            });
+            
+            const progressPanel = document.getElementById('upload-progress-panel');
+            if (progressPanel) progressPanel.classList.remove('hidden');
+            
+            const uploadBtn = document.getElementById('btn-start-upload');
+            if (uploadBtn) {
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>上传中...';
+            }
+            
+            let completed = 0;
+            let failed = 0;
+            
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const itemId = `upload-item-${uploadId}-${i}`;
+                const itemEl = document.getElementById(itemId);
+                if (!itemEl) continue;
+                
+                const statusText = itemEl.querySelector('.status-text');
+                const progressBar = itemEl.querySelector('.progress-bar');
+                const progressText = itemEl.querySelector('.progress-text');
+                const speedText = itemEl.querySelector('.speed-text');
+                
+                if (statusText) statusText.textContent = '上传中...';
+                
+                const formData = new FormData();
+                formData.append('title', file.name);
+                formData.append('description', '');
+                formData.append('category', category);
+                formData.append('visibility', visibility);
+                
+                if (state.currentFolderId) {
+                    formData.append('parent_id', state.currentFolderId);
+                }
+                
+                formData.append('file', file);
+                
+                try {
+                    await uploadDocumentWithProgress(
+                        formData,
+                        (progress) => {
+                            if (progressBar) progressBar.style.width = progress.percent + '%';
+                            if (progressText) progressText.textContent = progress.percent + '%';
+                            if (speedText && progress.speed > 0) {
+                                speedText.textContent = formatFileSize(progress.speed) + '/s';
+                            }
+                        }
+                    );
+                    
+                    if (statusText) {
+                        statusText.textContent = '完成';
+                        statusText.classList.remove('text-slate-400');
+                        statusText.classList.add('text-green-500');
+                    }
+                    if (progressBar) {
+                        progressBar.classList.remove('bg-blue-500');
+                        progressBar.classList.add('bg-green-500');
+                    }
+                    completed++;
+                    
+                } catch (error) {
+                    if (statusText) {
+                        statusText.textContent = '失败';
+                        statusText.classList.remove('text-slate-400');
+                        statusText.classList.add('text-red-500');
+                    }
+                    if (progressBar) {
+                        progressBar.classList.remove('bg-blue-500');
+                        progressBar.classList.add('bg-red-500');
+                    }
+                    failed++;
+                }
+            }
+            
+            if (failed === 0) {
+                showToast(`成功上传 ${completed} 个文件`, 'success');
+            } else {
+                showToast(`上传完成: ${completed} 成功, ${failed} 失败`, 'warning');
+            }
+            
+            hideModal('upload-modal');
+            
+            uploadForm.reset();
+            selectedFiles = [];
+            updateSelectedFilesUI();
+            
+            await loadDocuments();
+            
+            if (uploadBtn) {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fas fa-upload mr-2"></i>开始上传';
+            }
+        };
+    }
+}
+
+// 添加文件到选择列表
+function addFilesToSelection(files) {
+    let added = 0;
+    let errors = [];
+    
+    files.forEach(file => {
+        if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+            return;
+        }
+        
+        const validation = uploadManager.validateFile(file);
+        if (!validation.valid) {
+            errors.push(validation.error);
+            return;
+        }
+        
+        selectedFiles.push(file);
+        added++;
+    });
+    
+    if (errors.length > 0) {
+        showToast(errors[0], 'warning');
+    }
+    
+    if (added > 0) {
+        updateSelectedFilesUI();
+        showToast(`已添加 ${added} 个文件`, 'success');
+    }
+}
+
+// 更新已选择文件列表UI
+function updateSelectedFilesUI() {
+    const container = document.getElementById('selected-files-container');
+    const list = document.getElementById('selected-files-list');
+    const countEl = document.getElementById('selected-files-count');
+    const sizeEl = document.getElementById('selected-files-size');
+    const uploadBtn = document.getElementById('btn-start-upload');
+    
+    if (!container || !list) return;
+    
+    if (selectedFiles.length === 0) {
+        container.classList.add('hidden');
+        if (uploadBtn) uploadBtn.disabled = true;
+        return;
+    }
+    
+    container.classList.remove('hidden');
+    if (uploadBtn) uploadBtn.disabled = false;
+    
+    if (countEl) countEl.textContent = selectedFiles.length;
+    const totalSize = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+    if (sizeEl) sizeEl.textContent = formatFileSize(totalSize);
+    
+    list.innerHTML = selectedFiles.map((file, index) => `
+        <div class="flex items-center justify-between p-3 hover:bg-slate-50">
+            <div class="flex items-center flex-1 min-w-0">
+                <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                    ${getFileIconHtml(file.name)}
+                </div>
+                <div class="min-w-0">
+                    <p class="text-sm font-medium text-slate-700 truncate" title="${file.name}">${file.name}</p>
+                    <p class="text-xs text-slate-400">${formatFileSize(file.size)}</p>
+                </div>
+            </div>
+            <button type="button" class="remove-file-btn ml-2 text-slate-400 hover:text-red-500 transition-colors" data-index="${index}">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `).join('');
+    
+    list.querySelectorAll('.remove-file-btn').forEach(btn => {
+        btn.onclick = () => {
+            const index = parseInt(btn.dataset.index);
+            selectedFiles.splice(index, 1);
+            updateSelectedFilesUI();
+        };
+    });
+}
